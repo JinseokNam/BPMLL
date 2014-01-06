@@ -9,16 +9,16 @@ labelSize = 20;
 layers = [hiddenSize labelSize];
 stack = cell(length(layers),1);
 for i=1:numel(stack)
-	if i==1
-		in_units = visibleSize;
-	else
-		in_units = layers(i-1);
-	end
-	out_units = layers(i);
+    if i==1
+        in_units = visibleSize;
+    else
+        in_units = layers(i-1);
+    end
+    out_units = layers(i);
 
-	r = sqrt(6)/sqrt(in_units+out_units+1);
-	stack{i}.w = rand(out_units, in_units)*2*r-r;
-	stack{i}.b = zeros(out_units,1);
+    r = sqrt(6)/sqrt(in_units+out_units+1);
+    stack{i}.w = rand(out_units, in_units)*2*r-r;
+    stack{i}.b = zeros(out_units,1);
 end
 
 theta = [stack{1}.w(:); stack{1}.b(:); stack{2}.w(:); stack{2}.b(:)];
@@ -36,9 +36,9 @@ options.useGPU = useGPU;
 options.debug = debug;
 
 if useGPU
-	theta = gpuArray(theta);
-	data = gpuArray(data);
-	labels = gpuArray(labels);
+    theta = gpuArray(theta);
+    data = gpuArray(data);
+    labels = gpuArray(labels);
 end
 
 [cost, grad] = BPMLLCost(theta, data, labels, visibleSize, hiddenSize, labelSize, options);

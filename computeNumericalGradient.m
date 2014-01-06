@@ -20,14 +20,14 @@ numgrad = zeros(size(theta));
 
 epsilon = 1e-4;
 for i=1:length(theta)
-	basis = zeros(size(theta));	basis(i)=1;
+    basis = zeros(size(theta)); basis(i)=1;
 %{
-	lj = J(theta+epsilon*basis)
-	rj = J(theta-epsilon*basis)
-	numgrad(i) = (lj - rj)/(2*epsilon)
-	pause
+    lj = J(theta+epsilon*basis)
+    rj = J(theta-epsilon*basis)
+    numgrad(i) = (lj - rj)/(2*epsilon)
+    pause
 %}
-	numgrad(i) = gather((J(theta + epsilon*basis) - J(theta - epsilon*basis)) / (2*epsilon));
+    numgrad(i) = gather((J(theta + epsilon*basis) - J(theta - epsilon*basis)) / (2*epsilon));
 end
 
 

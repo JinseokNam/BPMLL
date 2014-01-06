@@ -24,50 +24,50 @@ b2 = theta(visibleSize*hiddenSize+hiddenSize+hiddenSize*labelSize+1:end);
 [O, dO] = tanh_act(bsxfun(@plus, W2*H, b2));
 
 if useGPU
-	[delta] = eval_bpmll_loss_gpumex(T,O);
-	if debug
-		[err,~] = computePW(gather(T),gather(O));
-		err = gpuArray(err);
-	end
+    [delta] = eval_bpmll_loss_gpumex(T,O);
+    if debug
+        [err,~] = computePW(gather(T),gather(O));
+        err = gpuArray(err);
+    end
 else
-	[delta] = eval_bpmll_loss_cpumex(T,O);
-	if debug
-		[err,~] = computePW(T,O);
-	end
+    [delta] = eval_bpmll_loss_cpumex(T,O);
+    if debug
+        [err,~] = computePW(T,O);
+    end
 end
 
 if debug
-	cost = 1/M*sum(err) + .5*l2_lambda*sum(sum(W1(:).^2) + sum(W2(:).^2));
+    cost = 1/M*sum(err) + .5*l2_lambda*sum(sum(W1(:).^2) + sum(W2(:).^2));
 else
-	cost = 0;
+    cost = 0;
 end
 
 if nargout > 1
 
-   	delta = (1/M)*delta .* dO; 
-	W2grad = delta*H' + l2_lambda*W2;
-	b2grad = sum(delta,2);
+    delta = (1/M)*delta .* dO; 
+    W2grad = delta*H' + l2_lambda*W2;
+    b2grad = sum(delta,2);
 
     delta = (W2'*delta) .* dH;
 
     W1grad = delta*X' + l2_lambda*W1;
     b1grad = sum(delta,2);
 
-	%% Roll gradient vector
-	grad = [W1grad(:) ; b1grad(:) ; W2grad(:) ; b2grad(:)]; 
+    %% Roll gradient vector
+    grad = [W1grad(:) ; b1grad(:) ; W2grad(:) ; b2grad(:)]; 
 else
-	grad = zeros(size(theta));
+    grad = zeros(size(theta));
 end
 
 
 end
 
 function [F,dF] = sigm_act(X)
-	F = 1./(1+exp(-X));
-	dF = F.*(1-F);
+    F = 1./(1+exp(-X));
+    dF = F.*(1-F);
 end
 
 function [F, dF] = tanh_act(X)
-	F = tanh(X);
-	dF = 1-F.^2;
+    F = tanh(X);
+    dF = 1-F.^2;
 end
